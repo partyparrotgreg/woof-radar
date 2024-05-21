@@ -1,6 +1,7 @@
 "use client";
 
 import { WoofLevelIcon } from "@/app/new/_components/WoofLevelIcon";
+import { YourLocationIcon } from "@/app/new/_components/YourLocation";
 import { env } from "@/env";
 import { useDummyPoints } from "@/hooks/useDummyPoints";
 import { cn, generateEntries, getCoords } from "@/lib/utils";
@@ -57,8 +58,12 @@ export const MapView = () => {
         defaultZoom={zoom}
         gestureHandling={"greedy"}
       >
-        <AdvancedMarker position={mapCenter}>
-          <Pin glyph="📍" background={"#000"} borderColor={"#fff"} />
+        <AdvancedMarker position={getCoords(location)}>
+          {location ? (
+            <YourLocationIcon />
+          ) : (
+            <Loader2 className="animate-spin" />
+          )}
         </AdvancedMarker>
         {memoPoints.map((point, index) => (
           <AdvancedMarker

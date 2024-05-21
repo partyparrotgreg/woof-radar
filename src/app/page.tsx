@@ -6,9 +6,14 @@ import { Card } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useCurrentLocation } from "@/hooks/useCurrentLocation";
 import { useDummyPoints } from "@/hooks/useDummyPoints";
-import { Loader2 } from "lucide-react";
+import { HelpCircle, Loader2 } from "lucide-react";
 import { WoofLevelIcon } from "./new/_components/WoofLevelIcon";
-import { calculateDistanceInMeters } from "@/lib/utils";
+import { calculateDistanceInMeters, woofLevelBackground } from "@/lib/utils";
+import { YourLocationIcon } from "./new/_components/YourLocation";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Item } from "@radix-ui/react-accordion";
 
 type Point = {
   id: string;
@@ -41,12 +46,26 @@ export default function Home() {
   };
   return (
     <>
-      <div className="relative flex grow flex-col gap-4 p-4">
-        <div className="flex shrink justify-between gap-2 rounded-lg bg-background p-2">
-          <div className="text-2xl">🐶📌</div>
-          <div className="flex gap-2">
-            <UserNav />
+      <div className="relative flex grow flex-col gap-4">
+        <div className="flex shrink justify-between gap-2 rounded-lg bg-background">
+          <div className="text-2xl font-semibold tracking-tight">
+            🐶 Woof Radar
           </div>
+          <div className="flex gap-2">
+            <Link href="/help">
+              <Button size={"icon"} variant={"ghost"}>
+                <HelpCircle size={16} />
+              </Button>
+            </Link>
+          </div>
+        </div>
+        <div className="flex flex-row items-center gap-2 rounded-lg bg-purple-200 pb-2 pl-4 pr-2 pt-2">
+          <YourLocationIcon />
+          <div className="grow">
+            <div className="font-medium">Your location</div>
+            <div className="text-sm opacity-60">Rua Dr Pita 26</div>
+          </div>
+          <UserNav />
         </div>
 
         <div className="flex h-48 grow flex-col gap-2">
@@ -60,14 +79,28 @@ export default function Home() {
                       <div>
                         <WoofLevelIcon level={point.level} index={index} />{" "}
                       </div>
-                      <div className="grow">Doggo</div>
-                      {point.distance ? (
-                        <div className="text-xs text-gray-500">
-                          {point.distance} away
+                      <div className="flex grow flex-col items-start">
+                        <div className="font-medium">Your location</div>
+                        <div className="text-sm opacity-60">Rua Dr Pita 26</div>
+                      </div>
+                      <div className="flex grow flex-col items-end">
+                        <div className="font-medium">
+                          <Badge
+                            style={{
+                              background: woofLevelBackground(point.level),
+                            }}
+                          >
+                            {point.level}
+                          </Badge>
                         </div>
-                      ) : (
-                        <Loader2 className="animate-spin" />
-                      )}
+                        <div className="text-sm opacity-60">
+                          {point.distance ? (
+                            `${point.distance} away`
+                          ) : (
+                            <Loader2 className="animate-spin" size={16} />
+                          )}
+                        </div>
+                      </div>
                     </div>
                   </Card>
                 ),

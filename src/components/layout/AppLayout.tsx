@@ -12,9 +12,9 @@ export const AppLayout = ({ children }: { children: ReactNode }) => {
       <Toaster />
       <TRPCReactProvider>
         <div className="relative flex h-screen flex-col">
-          <div className="relative grid h-full grid-cols-3 gap-4 p-4">
-            <div className="h-42 flex grow flex-col">{children}</div>
-            <div className="relative col-span-2 overflow-hidden rounded-2xl">
+          <div className="relative flex h-full flex-row gap-4 p-4 lg:gap-8 lg:p-8">
+            <div className="h-42 flex w-[500px] flex-col">{children}</div>
+            <div className="relative col-span-2 w-full overflow-hidden rounded-2xl">
               <MapView />
             </div>
           </div>
