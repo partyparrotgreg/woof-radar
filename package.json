@@ -12,6 +12,7 @@
     "start": "next start"
   },
   "dependencies": {
+    "@googlemaps/markerclusterer": "^2.5.3",
     "@hookform/resolvers": "^3.4.2",
     "@kinde-oss/kinde-auth-nextjs": "^2.2.10",
     "@radix-ui/react-accordion": "^1.1.2",

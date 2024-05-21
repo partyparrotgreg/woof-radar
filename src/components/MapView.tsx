@@ -1,40 +1,77 @@
 "use client";
 
+import { WoofLevelIcon } from "@/app/new/_components/WoofLevelIcon";
 import { env } from "@/env";
+import { useDummyPoints } from "@/hooks/useDummyPoints";
+import { cn, generateEntries, getCoords } from "@/lib/utils";
 import { useAppStore } from "@/stores/app-store-provider";
-import { APIProvider, Map } from "@vis.gl/react-google-maps";
+
+import {
+  APIProvider,
+  AdvancedMarker,
+  Map,
+  Pin,
+  useApiIsLoaded,
+  useMap,
+} from "@vis.gl/react-google-maps";
+import { Loader2, MapIcon } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
 
 export const MapView = () => {
+  const map = useMap();
+  const apiIsLoaded = useApiIsLoaded();
+  const memoPoints = useDummyPoints();
   const { location } = useAppStore((state) => state);
-  console.log("map view", location);
-  if (!location)
+  const [mapCenter, setMapCenter] = useState(getCoords(location));
+  const [zoom, setZoom] = useState(18);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (!map || !apiIsLoaded) setLoading(true);
+    setLoading(false);
+    setMapCenter(getCoords(location));
+    setZoom(18);
+    map?.setCenter(getCoords(location));
+    map?.setZoom(18);
+  }, [apiIsLoaded, location, map]);
+
+  if (loading)
     return (
-      <div className="h-full w-full overflow-hidden rounded-2xl outline">
-        Loading...
+      <div className="flex h-full w-full flex-col items-center justify-center overflow-hidden rounded-2xl bg-slate-100">
+        <Loader2 className="animate-spin" />
       </div>
     );
   return (
     <APIProvider apiKey={`${env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}`}>
       <Map
+        mapId={env.NEXT_PUBLIC_GOOGLE_MAP_ID}
         className="h-full w-full overflow-hidden rounded-2xl outline"
-        defaultCenter={
-          {
-            lat: location.coords.latitude,
-            lng: location.coords.longitude,
-          } ?? { lat: 22.54992, lng: 0 }
+        defaultCenter={mapCenter}
+        center={mapCenter}
+        onCenterChanged={(center) =>
+          setMapCenter({
+            lat: center.detail.center.lat,
+            lng: center.detail.center.lng,
+          })
         }
-        onCenterChanged={(center) => {
-          console.log("center changed", center); // TODO tutaj chyba dragowac mozna
-        }}
-        center={{
-          lat: location.coords.latitude,
-          lng: location.coords.longitude,
-        }}
-        defaultZoom={6}
-        zoom={18}
+        defaultZoom={zoom}
         gestureHandling={"greedy"}
-        disableDefaultUI={true}
-      />
+      >
+        <AdvancedMarker position={mapCenter}>
+          <Pin glyph="📍" background={"#000"} borderColor={"#fff"} />
+        </AdvancedMarker>
+        {memoPoints.map((point, index) => (
+          <AdvancedMarker
+            key={point.id}
+            position={{ lat: point.lat, lng: point.lng }}
+          >
+            <WoofLevelIcon level={point.level} index={index} />
+          </AdvancedMarker>
+        ))}
+      </Map>
     </APIProvider>
   );
 };
+
+
+
