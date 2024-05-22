@@ -15,6 +15,7 @@ export type AppActions = {
   decrementLevel: () => void;
   incrementLevel: () => void;
   setLocation: (location: GeolocationPosition) => void;
+  setLevel: (level: number) => void;
 };
 
 export const initAppStore = (): AppState => ({
@@ -64,6 +65,7 @@ export const createAppStore = (initState: AppState = defaultInitState) => {
     ...initState,
     decrementLevel: () => set((state) => ({ level: state.level - 1 })),
     incrementLevel: () => set((state) => ({ level: state.level + 1 })),
+    setLevel: (level) => set({ level }),
     setLocation: (location) => set({ location }),
   }));
 };

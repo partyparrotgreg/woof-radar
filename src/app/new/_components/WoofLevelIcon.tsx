@@ -18,10 +18,12 @@ export const WoofLevelIcon = ({
         zIndex: 10 * index + 10,
       }}
     >
-      <span className="-translate-x-2 text-xl drop-shadow-md filter">
+      <span className="-translate-x-1 -translate-y-3 text-xl drop-shadow-md filter">
         {woofLevel(level)}
       </span>
-      <span className="-translate-x-2 text-sm font-bold">{level}</span>
+      <span className="-translate-x-2 translate-y-1 text-sm font-bold">
+        {level}
+      </span>
     </div>
   );
 };
