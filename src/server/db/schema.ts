@@ -18,9 +18,7 @@ import {
  *
  * @see https://orm.drizzle.team/docs/goodies#multi-project-schema
  */
-export const createTable = pgTableCreator(
-  (name) => `woof-radar-t3-drizzle_${name}`,
-);
+export const createTable = pgTableCreator((name) => `woofradar_${name}`);
 
 export const posts = createTable(
   "post",
