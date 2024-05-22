@@ -1,22 +1,45 @@
+import { WoofLevelIcon } from "@/app/new/_components/WoofLevelIcon";
 import { YourLocationIcon } from "@/app/new/_components/YourLocation";
+import { useCurrentLocation } from "@/hooks/useCurrentLocation";
 import { useAppStore } from "@/stores/app-store-provider";
-import Link from "next/link";
+import { api } from "@/trpc/react";
+import { LoaderCircle } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import { Button } from "../ui/button";
 import { Slider } from "../ui/slider";
-import { WoofLevelIcon } from "@/app/new/_components/WoofLevelIcon";
-import { api } from "@/trpc/react";
-import { useCurrentLocation } from "@/hooks/useCurrentLocation";
-import { useEffect, useState } from "react";
 import { toast } from "../ui/use-toast";
-import { LoaderCircle, MapPin } from "lucide-react";
 
 export const WooFormV2 = () => {
+  const [disabled, setDisabled] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
   const { location } = useCurrentLocation();
   const level = useAppStore((state) => state.level);
   const setLevel = useAppStore((state) => state.setLevel);
-  const { mutate, error } = api.woof.create.useMutation();
-  const [disabled, setDisabled] = useState(true);
-  const [loading, setLoading] = useState(false);
+
+  const createWoof = api.woof.create.useMutation({
+    onSuccess: () => {
+      setLoading(false);
+      toast({
+        title: "Success",
+        description: "Woof created",
+        variant: "success",
+      });
+      router.refresh();
+    },
+    onError: (error) => {
+      setLoading(false);
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+    onMutate: () => {
+      setLoading(true);
+    },
+  });
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     if (!location) return;
@@ -24,28 +47,13 @@ export const WooFormV2 = () => {
     const formData = new FormData(e.currentTarget);
     const level = Number(formData.get("level"));
 
-    mutate({
+    createWoof.mutate({
       level,
       lat: location?.coords.latitude,
       lng: location?.coords.longitude,
       ownerId: 234234,
     });
   };
-
-  useEffect(() => {
-    if (location) {
-      setDisabled(false);
-    }
-  }, [location]);
-
-  useEffect(() => {
-    if (error) {
-      toast({
-        title: "Error",
-        description: error.message,
-      });
-    }
-  }, [error]);
 
   return (
     <form onSubmit={handleSubmit}>
@@ -75,7 +83,6 @@ export const WooFormV2 = () => {
           defaultValue={[level]}
           value={[level]}
           max={100}
-          step={20}
           level={level}
           onValueChange={(value) => setLevel(Number(value[0]))}
         />

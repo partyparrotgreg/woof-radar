@@ -16,6 +16,7 @@ export const useCurrentLocation = () => {
         setCurrentLocation(position);
         setLocation(position);
         toast({
+          variant: "info",
           description: "Updated location",
           duration: 2500,
         });
@@ -23,6 +24,7 @@ export const useCurrentLocation = () => {
       () => {
         setError("Unable to retrieve your location");
         toast({
+          variant: "destructive",
           description: "Unable to retrieve your location",
           action: (
             <ToastAction altText="Refresh" onClick={handleRefreshLocation}>
@@ -38,8 +40,8 @@ export const useCurrentLocation = () => {
     if (!navigator.geolocation) {
       setError("Geolocation is not supported by your browser");
       toast({
-        title: "Scheduled: Catch up ",
-        description: "Friday, February 10, 2023 at 5:57 PM",
+        variant: "destructive",
+        description: "Geolocation is not supported by your browser",
         action: (
           <ToastAction
             altText="Goto schedule to undo"

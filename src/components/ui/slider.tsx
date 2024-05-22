@@ -26,7 +26,7 @@ const Slider = React.forwardRef<
       )}
     >
       <SliderPrimitive.Range
-        className={cn("absolute h-full transition-all")}
+        className={cn("transition-background absolute h-full")}
         style={{ left: 0, right: 0, background: woofLevelBackground(level) }}
       />
     </SliderPrimitive.Track>

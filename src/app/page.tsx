@@ -71,10 +71,6 @@ export default function Home() {
           </ScrollArea>
         </div>
       </div>
-
-      <div>
-        <ListPagination />
-      </div>
     </>
   );
 }
