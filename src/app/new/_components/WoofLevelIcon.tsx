@@ -10,15 +10,18 @@ export const WoofLevelIcon = ({
   return (
     <div
       className={cn(
-        "h-8 w-8 rounded-full",
-        "flex items-center justify-center border-2 border-background text-xl text-white shadow-lg",
+        "h-8 w-8 rounded-xl p-2",
+        "flex items-center justify-center border-2 border-background  text-white shadow-lg",
       )}
       style={{
         background: woofLevelBackground(level),
         zIndex: 10 * index + 10,
       }}
     >
-      {woofLevel(level)}
+      <span className="-translate-x-2 text-xl drop-shadow-md filter">
+        {woofLevel(level)}
+      </span>
+      <span className="-translate-x-2 text-sm font-bold">{level}</span>
     </div>
   );
 };

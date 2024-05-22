@@ -1,40 +1,20 @@
 "use client";
 
 import { ListPagination } from "@/components/ListPagination";
-import { UserNav } from "@/components/auth/UserNav";
+import { WooFormV2 } from "@/components/auth/WooFormV2";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { useCurrentLocation } from "@/hooks/useCurrentLocation";
 import { useDummyPoints } from "@/hooks/useDummyPoints";
+import { woofLevelBackground } from "@/lib/utils";
 import { HelpCircle, Loader2 } from "lucide-react";
-import { WoofLevelIcon } from "./new/_components/WoofLevelIcon";
-import { calculateDistanceInMeters, woofLevelBackground } from "@/lib/utils";
-import { YourLocationIcon } from "./new/_components/YourLocation";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Item } from "@radix-ui/react-accordion";
-import { Slider } from "@/components/ui/slider";
-import { WooFormV2 } from "@/components/auth/WooFormV2";
+import { WoofLevelIcon } from "./new/_components/WoofLevelIcon";
 
 export default function Home() {
-  const { location } = useCurrentLocation();
   const memoPoints = useDummyPoints();
 
-  const remapPointsWithDistanceAndFilterByDistance = () => {
-    if (!location) return memoPoints;
-
-    return memoPoints
-      .map((point) => ({
-        ...point,
-        distance: calculateDistanceInMeters(location.coords, point),
-      }))
-      .sort((a, b) => {
-        if (a.distance < b.distance) return -1;
-        if (a.distance > b.distance) return 1;
-        return 0;
-      });
-  };
   return (
     <>
       <div className="relative flex grow flex-col gap-4">
@@ -56,39 +36,37 @@ export default function Home() {
           {" "}
           <ScrollArea className="h-48 grow">
             <div className="flex flex-col gap-1">
-              {remapPointsWithDistanceAndFilterByDistance().map(
-                (point, index) => (
-                  <Card className="p-4" key={index}>
-                    <div className="flex flex-row items-center gap-2">
-                      <div>
-                        <WoofLevelIcon level={point.level} index={index} />{" "}
+              {memoPoints.map((point, index) => (
+                <Card className="p-4" key={index}>
+                  <div className="flex flex-row items-center gap-2">
+                    <div>
+                      <WoofLevelIcon level={point.level} index={index} />{" "}
+                    </div>
+                    <div className="flex grow flex-col items-start">
+                      <div className="font-medium">Your location</div>
+                      <div className="text-sm opacity-60">Rua Dr Pita 26</div>
+                    </div>
+                    <div className="flex grow flex-col items-end">
+                      <div className="font-medium">
+                        <Badge
+                          style={{
+                            background: woofLevelBackground(point.level),
+                          }}
+                        >
+                          {point.level}
+                        </Badge>
                       </div>
-                      <div className="flex grow flex-col items-start">
-                        <div className="font-medium">Your location</div>
-                        <div className="text-sm opacity-60">Rua Dr Pita 26</div>
-                      </div>
-                      <div className="flex grow flex-col items-end">
-                        <div className="font-medium">
-                          <Badge
-                            style={{
-                              background: woofLevelBackground(point.level),
-                            }}
-                          >
-                            {point.level}
-                          </Badge>
-                        </div>
-                        <div className="text-sm opacity-60">
-                          {point.distance ? (
-                            `${point.distance}`
-                          ) : (
-                            <Loader2 className="animate-spin" size={16} />
-                          )}
-                        </div>
+                      <div className="text-sm opacity-60">
+                        {point.distance ? (
+                          `${point.distance}`
+                        ) : (
+                          <Loader2 className="animate-spin" size={16} />
+                        )}
                       </div>
                     </div>
-                  </Card>
-                ),
-              )}
+                  </div>
+                </Card>
+              ))}
             </div>
           </ScrollArea>
         </div>
