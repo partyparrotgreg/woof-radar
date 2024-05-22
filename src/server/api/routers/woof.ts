@@ -20,13 +20,7 @@ export const woofRouter = createTRPCRouter({
         .values({ ...input })
         .execute();
     }),
-  get: publicProcedure.query(({ ctx }) => {
+  getAllWoofs: publicProcedure.query(({ ctx }) => {
     return ctx.db.query.woofs.findMany();
-  }),
-
-  getLatest: publicProcedure.query(({ ctx }) => {
-    return ctx.db.query.posts.findFirst({
-      orderBy: (posts, { desc }) => [desc(posts.createdAt)],
-    });
   }),
 });
