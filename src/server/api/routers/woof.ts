@@ -1,7 +1,6 @@
 import { woofs } from "@/server/db/schema";
-import { createTRPCRouter, publicProcedure } from "../trpc";
 import { z } from "zod";
-import { or } from "drizzle-orm";
+import { createTRPCRouter, publicProcedure } from "../trpc";
 
 export const woofRouter = createTRPCRouter({
   create: publicProcedure

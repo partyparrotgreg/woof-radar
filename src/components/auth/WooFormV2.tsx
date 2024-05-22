@@ -1,17 +1,16 @@
-import { WoofLevelIcon } from "@/app/new/_components/WoofLevelIcon";
-import { YourLocationIcon } from "@/app/new/_components/YourLocation";
+import { WoofLevelIcon } from "@/components/WoofLevelIcon";
+import { YourLocationIcon } from "@/components/YourLocation";
 import { useCurrentLocation } from "@/hooks/useCurrentLocation";
 import { useAppStore } from "@/stores/app-store-provider";
 import { api } from "@/trpc/react";
 import { LoaderCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Button } from "../ui/button";
 import { Slider } from "../ui/slider";
 import { toast } from "../ui/use-toast";
 
 export const WooFormV2 = () => {
-  const [disabled, setDisabled] = useState(true);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const { location } = useCurrentLocation();

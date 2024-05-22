@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { WoofForm } from "./_components/WoofForm";
+import { WoofForm } from "../../components/WoofForm";
 
 export default function NewPage() {
   return (

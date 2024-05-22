@@ -1,22 +1,21 @@
 "use client";
 
-import { WoofLevelIcon } from "@/app/new/_components/WoofLevelIcon";
-import { YourLocationIcon } from "@/app/new/_components/YourLocation";
+import { WoofLevelIcon } from "@/components/WoofLevelIcon";
+import { YourLocationIcon } from "@/components/YourLocation";
 import { env } from "@/env";
 import { useDummyPoints } from "@/hooks/useDummyPoints";
-import { cn, generateEntries, getCoords } from "@/lib/utils";
+import { getCoords } from "@/lib/utils";
 import { useAppStore } from "@/stores/app-store-provider";
 
 import {
   APIProvider,
   AdvancedMarker,
   Map,
-  Pin,
   useApiIsLoaded,
   useMap,
 } from "@vis.gl/react-google-maps";
-import { Loader2, MapIcon } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { Loader2 } from "lucide-react";
+import { useEffect, useState } from "react";
 
 export const MapView = () => {
   const map = useMap();

@@ -71,6 +71,6 @@
       @apply border-border;
     }
     body {
-      @apply bg-background text-foreground;
+      @apply bg-gradient-to-tr from-purple-100 to-blue-100 text-foreground;
     }
   }

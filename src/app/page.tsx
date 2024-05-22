@@ -10,7 +10,7 @@ import { useDummyPoints } from "@/hooks/useDummyPoints";
 import { woofLevelBackground } from "@/lib/utils";
 import { HelpCircle, Loader2 } from "lucide-react";
 import Link from "next/link";
-import { WoofLevelIcon } from "./new/_components/WoofLevelIcon";
+import { WoofLevelIcon } from "../components/WoofLevelIcon";
 
 export default function Home() {
   const memoPoints = useDummyPoints();
@@ -18,7 +18,7 @@ export default function Home() {
   return (
     <>
       <div className="relative flex grow flex-col gap-4">
-        <div className="flex shrink justify-between gap-2 rounded-lg bg-background">
+        <div className="flex shrink items-center justify-between gap-2 rounded-lg">
           <div className="text-2xl font-semibold tracking-tight">
             🐶 Woof Radar
           </div>
