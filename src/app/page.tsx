@@ -14,24 +14,15 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Item } from "@radix-ui/react-accordion";
-
-type Point = {
-  id: string;
-  level: number;
-  lat: number;
-  lng: number;
-};
-
-type PointWithDistance = Point & {
-  distance: number;
-};
+import { Slider } from "@/components/ui/slider";
+import { WooFormV2 } from "@/components/auth/WooFormV2";
 
 export default function Home() {
   const { location } = useCurrentLocation();
   const memoPoints = useDummyPoints();
 
   const remapPointsWithDistanceAndFilterByDistance = () => {
-    if (!location) return memoPoints as PointWithDistance[];
+    if (!location) return memoPoints;
 
     return memoPoints
       .map((point) => ({
@@ -59,14 +50,7 @@ export default function Home() {
             </Link>
           </div>
         </div>
-        <div className="flex flex-row items-center gap-2 rounded-lg bg-purple-200 pb-2 pl-4 pr-2 pt-2">
-          <YourLocationIcon />
-          <div className="grow">
-            <div className="font-medium">Your location</div>
-            <div className="text-sm opacity-60">Rua Dr Pita 26</div>
-          </div>
-          <UserNav />
-        </div>
+        <WooFormV2 />
 
         <div className="flex h-48 grow flex-col gap-2">
           {" "}
@@ -95,7 +79,7 @@ export default function Home() {
                         </div>
                         <div className="text-sm opacity-60">
                           {point.distance ? (
-                            `${point.distance} away`
+                            `${point.distance}`
                           ) : (
                             <Loader2 className="animate-spin" size={16} />
                           )}
