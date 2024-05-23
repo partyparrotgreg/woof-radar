@@ -7,9 +7,8 @@ export const woofRouter = createTRPCRouter({
     .input(
       z.object({
         level: z.number(),
-        lat: z.number(),
-        lng: z.number(),
-        ownerId: z.number(),
+        lat: z.string(),
+        lng: z.string(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
@@ -17,7 +16,11 @@ export const woofRouter = createTRPCRouter({
       await new Promise((resolve) => setTimeout(resolve, 1000));
       await ctx.db
         .insert(woofs)
-        .values({ ...input })
+        .values({
+          level: input.level,
+          lat: input.lat,
+          lng: input.lng,
+        })
         .execute();
     }),
   getAllWoofs: publicProcedure.query(({ ctx }) => {

@@ -3,11 +3,11 @@
 
 import { sql } from "drizzle-orm";
 import {
-  index,
+  boolean,
   integer,
+  pgTable,
   pgTableCreator,
   serial,
-  text,
   timestamp,
   varchar,
 } from "drizzle-orm/pg-core";
@@ -18,8 +18,6 @@ import {
  *
  * @see https://orm.drizzle.team/docs/goodies#multi-project-schema
  */
-export const createTable = pgTableCreator((name) => `woofradar_${name}`);
-
 
 // export const users = createTable(
 //   "user",
@@ -51,16 +49,12 @@ export const createTable = pgTableCreator((name) => `woofradar_${name}`);
 //   }),
 // );
 
-export const woofs = createTable("woof", {
+export const woofs = pgTable("woof", {
   id: serial("id").primaryKey(),
-  name: varchar("name", { length: 256 }),
   level: integer("level"),
-  lat: integer("lat"),
-  lng: integer("lng"),
-  address: varchar("address", { length: 256 }),
-  // ownerId: integer("owner_id")
-  //   .notNull()
-  //   .references(() => users.id),
+  lat: varchar("lat", { length: 256 }),
+  lng: varchar("lng", { length: 256 }),
+  isPublic: boolean("is_public").default(false),
   createdAt: timestamp("created_at", { withTimezone: true })
     .default(sql`CURRENT_TIMESTAMP`)
     .notNull(),

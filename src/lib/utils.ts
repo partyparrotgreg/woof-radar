@@ -1,10 +1,10 @@
-import { type ClassValue, clsx } from "clsx"
-import { twMerge } from "tailwind-merge"
+import { useCurrentLocation } from "@/hooks/useCurrentLocation";
+import { type ClassValue, clsx } from "clsx";
+import { twMerge } from "tailwind-merge";
 
 export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs))
+  return twMerge(clsx(inputs));
 }
-
 
 export function generateEntries(
   location: Partial<GeolocationPosition> | null,
@@ -68,12 +68,12 @@ export function getCoords(pos: GeolocationPosition) {
 }
 
 export function calculateDistanceInMeters(
-  currentLocation: Partial<GeolocationCoordinates>,
+  currentLocation: Partial<GeolocationCoordinates> | undefined,
   pointLocation: { lat: number; lng: number },
 ) {
-  if (!currentLocation) return "0m";
+  if (!currentLocation) return 0;
   const { latitude, longitude } = currentLocation;
-  if (!latitude || !longitude) return "0m";
+  if (!latitude || !longitude) return 0;
   const R = 6371e3; // metres
   const pointLat = pointLocation.lat;
   const pointLng = pointLocation.lng;
@@ -89,5 +89,20 @@ export function calculateDistanceInMeters(
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 
   const d = R * c; // in metres
-  return d.toFixed(0) + "m";
+  return Number(d.toFixed(0));
 }
+
+export const checkIfTheLocationExists = (
+  location: Partial<GeolocationPosition>,
+  point: { lat: number; lng: number },
+) => {
+  // approx 50m
+  if (!location) return false;
+  const distance = calculateDistanceInMeters(location.coords, point);
+  return distance < 50;
+};
+
+export const formatDistanceNumber = (distance: number) => {
+  if (distance < 1000) return `${distance}m`;
+  return `${(distance / 1000).toFixed(2)}km`;
+};

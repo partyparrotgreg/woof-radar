@@ -25,7 +25,6 @@ export const WooFormV2 = () => {
         description: "Woof created",
         variant: "success",
       });
-      router.refresh();
     },
     onError: (error) => {
       setLoading(false);
@@ -38,6 +37,10 @@ export const WooFormV2 = () => {
     onMutate: () => {
       setLoading(true);
     },
+    onSettled: () => {
+      setLoading(false);
+      router.refresh();
+    },
   });
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -48,9 +51,8 @@ export const WooFormV2 = () => {
 
     createWoof.mutate({
       level,
-      lat: location?.coords.latitude,
-      lng: location?.coords.longitude,
-      ownerId: 234234,
+      lat: String(location?.coords.latitude),
+      lng: String(location?.coords.longitude),
     });
   };
 
@@ -78,10 +80,12 @@ export const WooFormV2 = () => {
           )}
         </div>
         <Slider
-          id="title"
+          name="level"
+          id="level"
           defaultValue={[level]}
           value={[level]}
-          max={100}
+          max={99}
+          min={10}
           level={level}
           onValueChange={(value) => setLevel(Number(value[0]))}
         />

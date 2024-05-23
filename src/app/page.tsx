@@ -1,19 +1,28 @@
 "use client";
 
-import { ListPagination } from "@/components/ListPagination";
+import { WoofCard } from "@/components/WoofCard";
 import { WooFormV2 } from "@/components/auth/WooFormV2";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { useDummyPoints } from "@/hooks/useDummyPoints";
-import { woofLevelBackground } from "@/lib/utils";
+import { useCurrentLocation } from "@/hooks/useCurrentLocation";
+import { calculateDistanceInMeters } from "@/lib/utils";
+import { api } from "@/trpc/react";
 import { HelpCircle, Loader2 } from "lucide-react";
 import Link from "next/link";
-import { WoofLevelIcon } from "../components/WoofLevelIcon";
-
 export default function Home() {
-  const memoPoints = useDummyPoints();
+  const allWoofs = api.woof.getAllWoofs.useQuery();
+  const points = allWoofs.data;
+  const { location } = useCurrentLocation();
+  if (!points) return <div>Loading...</div>;
+  const pointsWithDistance = points?.map((point) => {
+    return {
+      ...point,
+      distance: calculateDistanceInMeters(location?.coords, {
+        lat: Number(point.lat),
+        lng: Number(point.lng),
+      }),
+    };
+  });
 
   return (
     <>
@@ -33,42 +42,19 @@ export default function Home() {
         <WooFormV2 />
 
         <div className="flex h-48 grow flex-col gap-2">
-          {" "}
-          <ScrollArea className="h-48 grow">
-            <div className="flex flex-col gap-1">
-              {memoPoints.map((point, index) => (
-                <Card className="p-4" key={index}>
-                  <div className="flex flex-row items-center gap-2">
-                    <div>
-                      <WoofLevelIcon level={point.level} index={index} />{" "}
-                    </div>
-                    <div className="flex grow flex-col items-start">
-                      <div className="font-medium">Your location</div>
-                      <div className="text-sm opacity-60">Rua Dr Pita 26</div>
-                    </div>
-                    <div className="flex grow flex-col items-end">
-                      <div className="font-medium">
-                        <Badge
-                          style={{
-                            background: woofLevelBackground(point.level),
-                          }}
-                        >
-                          {point.level}
-                        </Badge>
-                      </div>
-                      <div className="text-sm opacity-60">
-                        {point.distance ? (
-                          `${point.distance}`
-                        ) : (
-                          <Loader2 className="animate-spin" size={16} />
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                </Card>
-              ))}
+          {points ? (
+            <ScrollArea className="h-48 grow">
+              <div className="flex flex-col gap-1">
+                {pointsWithDistance.map((point, index) => (
+                  <WoofCard key={point.id} point={point} index={index} />
+                ))}
+              </div>
+            </ScrollArea>
+          ) : (
+            <div className="flex h-48 grow items-center justify-center">
+              <Loader2 className="animate-spin" />
             </div>
-          </ScrollArea>
+          )}
         </div>
       </div>
     </>
