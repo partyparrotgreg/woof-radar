@@ -9,6 +9,7 @@ export const PageHeader = () => {
       <div className="text-2xl font-semibold tracking-tight">🐶 Woof Radar</div>
       <div className="flex gap-2">
         <SignedIn>
+          <Button size={"sm"}>My woofs</Button>
           <UserButton />
         </SignedIn>
         <SignedOut>
