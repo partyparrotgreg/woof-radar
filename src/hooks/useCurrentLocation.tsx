@@ -1,20 +1,16 @@
 import { ToastAction } from "@/components/ui/toast";
 import { toast } from "@/components/ui/use-toast";
-import { useAppStore } from "@/stores/app-store-provider";
 import { useCallback, useEffect, useState } from "react";
 
 export const useCurrentLocation = () => {
   const [currentLocation, setCurrentLocation] =
     useState<GeolocationPosition | null>(null);
-  const { setLocation } = useAppStore((state) => state);
   const [error, setError] = useState<string | null>(null);
 
-  // const updateStoreLocation
   const handleRefreshLocation = useCallback(() => {
     navigator.geolocation.getCurrentPosition(
       (position) => {
         setCurrentLocation(position);
-        setLocation(position);
         toast({
           variant: "info",
           description: "Updated location",
@@ -34,7 +30,7 @@ export const useCurrentLocation = () => {
         });
       },
     );
-  }, [setLocation]);
+  }, []);
 
   useEffect(() => {
     if (!navigator.geolocation) {
