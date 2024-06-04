@@ -1,89 +1,103 @@
-"use client";
-
+import { WoofLevelIcon } from "@/components/WoofLevelIcon";
+import { YourLocationIcon } from "@/components/YourLocation";
+import { useCurrentLocation } from "@/hooks/useCurrentLocation";
+import { useAppStore } from "@/stores/app-store-provider";
+import { api } from "@/trpc/react";
+import { LoaderCircle } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { Button } from "./ui/button";
+import { Slider } from "./ui/slider";
+import { toast } from "./ui/use-toast";
+/* 
+ TODO: Form features
+ 1. User can create w new woof only if they are logged in
+ 2. If there's a woof in the database with the same location, you can't add a new one
+ 3. User can remove their woof
+ 
+*/
 
-export const verbalWoofLevelBasedOnWoofLevel = (woofLevel: number) => {
-  if (woofLevel === 0)
-    return {
-      label: "Silent",
-      color: "text-green-500",
-      border: "border-green-500",
-      backgroundColor: "bg-green-100",
-    };
-  if (woofLevel === 25)
-    return {
-      label: "Low",
-      color: "text-yellow-500",
-      border: "border-yellow-500",
-      backgroundColor: "bg-yellow-100",
-    };
-  if (woofLevel === 50)
-    return {
-      label: "Medium",
-      color: "text-yellow-500",
-      border: "border-yellow-500",
-      backgroundColor: "bg-yellow-100",
-    };
-  if (woofLevel === 75)
-    return {
-      label: "High",
-      color: "text-red-500",
-      border: "border-red-500",
-      backgroundColor: "bg-red-100",
-    };
-  if (woofLevel === 100)
-    return {
-      label: "Very high",
-      color: "text-red-500",
-      border: "border-red-500",
-      backgroundColor: "bg-red-100",
-    };
-};
+export const WoofForm = () => {
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
+  const { location } = useCurrentLocation();
+  const level = useAppStore((state) => state.level);
+  const setLevel = useAppStore((state) => state.setLevel);
 
-export const WoofForm = ({
-  marker,
-}: {
-  marker: { lat: number; lng: number };
-}) => {
-  console.log(marker);
-  // const { currentUser } = useAuth();
-  const [woofLevel, setWoofLevel] = useState<number>(0);
+  const createWoof = api.woof.create.useMutation({
+    onSuccess: () => {
+      setLoading(false);
+      toast({
+        title: "Success",
+        description: "Woof created",
+        variant: "success",
+      });
+    },
+    onError: (error) => {
+      setLoading(false);
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+    onMutate: () => {
+      setLoading(true);
+    },
+    onSettled: () => {
+      setLoading(false);
+      router.refresh();
+    },
+  });
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    if (!location) return;
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    const level = Number(formData.get("level"));
+
+    createWoof.mutate({
+      level,
+      lat: String(location?.coords.latitude),
+      lng: String(location?.coords.longitude),
+    });
+  };
 
   return (
-    <div className="space-y-4">
-      <div className="flex flex-col space-y-4">
-        <div className="flex flex-col space-y-1 text-black">
-          <div className="flex flex-row justify-between">
-            <h3 className="text-lg font-semibold">Woof level</h3>
-            <div
-              className={`${verbalWoofLevelBasedOnWoofLevel(woofLevel)?.color}`}
-            >
-              {verbalWoofLevelBasedOnWoofLevel(woofLevel)?.label}
-            </div>
+    <form onSubmit={handleSubmit}>
+      <div className=" flex flex-col gap-4 rounded-lg bg-purple-200 p-4">
+        <div className="flex flex-row items-center gap-2">
+          {level > 0 ? (
+            <WoofLevelIcon level={level} index={0} />
+          ) : (
+            <YourLocationIcon />
+          )}
+          <div className="grow">
+            <div className="font-medium">Your location</div>
+            <div className="text-sm opacity-60">Rua Dr Pita 26</div>
           </div>
-          <small>Tell us how loud is the barking around your location.</small>
+          {!location ? (
+            <div className="p-2">
+              <LoaderCircle className="animate-spin" size={16} />
+            </div>
+          ) : (
+            <Button disabled={loading}>
+              {loading ? "One sec..." : "Save"}
+            </Button>
+          )}
         </div>
-        <input
-          type="range"
-          min={0}
-          max="100"
-          value={woofLevel}
-          onChange={(e) => setWoofLevel(Number(e.target.value))}
-          className="range"
-          step="25"
+        <Slider
+          name="level"
+          id="level"
+          defaultValue={[level]}
+          value={[level]}
+          max={99}
+          min={10}
+          level={level}
+          onValueChange={(value) => setLevel(Number(value[0]))}
         />
-        <div className="flex w-full justify-between px-2 text-xs">
-          <span>|</span>
-          <span>|</span>
-          <span>|</span>
-          <span>|</span>
-          <span>|</span>
-        </div>
+        <p className="text-sm opacity-75">Adjust the barking level: {level}</p>
       </div>
-
-      <div className="flex gap-2">
-        <button className="btn btn-primary flex-grow">Submit</button>
-      </div>
-    </div>
+    </form>
   );
 };
